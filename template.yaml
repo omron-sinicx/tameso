@@ -1,62 +1,59 @@
 theme: default # default || dark
 organization: OMRON SINIC X
 twitter: '@omron_sinicx'
-title: 'Multi-Agent Behavior Retrieval: Retrieval-Augmented Policy Training for Cooperative Manipulation by Mobile Robots'
-conference: IROS2024
+title: 'Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist'
+conference: RA-L 2026
 resources:
-  paper: https://arxiv.org/abs/1909.13111
-  poster:
-  code: https://github.com/omron-sinicx/multipolar
-  video: https://www.youtube.com/embed/W8nBFKDxsb0
-  blog: https://medium.com/sinicx/multipolar-multi-source-policy-aggregation-for-transfer-reinforcement-learning-between-diverse-bc42a152b0f5
-  demo: https://colab.research.google.com/
-  huggingface: https://huggingface.co/
-description: explore a new challenge in transfer RL, where only a set of source policies collected under unknown diverse dynamics is available for learning a target task efficiently.
+  paper: https://arxiv.org/abs/2601.19275
+  poster: # TODO(human)
+  code: # TODO(human): code release URL, if any
+  video: # TODO(human): supplementary video URL, if any
+  blog:
+  demo:
+  huggingface:
+description: A soft wrist collects safe tactile demos, and masked trajectory encoding retrieves them to insert unseen pegs at 85% success.
 image: https://omron-sinicx.github.io/${your-repository-name}/teaser.png
 url: https://omron-sinicx.github.io/${your-repository-name}
-speakerdeck: b7a0614c24014dcbbb121fbb9ed234cd
+speakerdeck: # set a speakerdeck data id to show the Slides section
 authors:
-  - name: So Kuroki
-    affiliation: [1, 2]
-    url: http://barekatain.me/
+  - name: Tatsuya Kamijo
+    affiliation: [1]
+    mark: '*'
     position: intern
+    url: https://tatsukamijo.github.io
   - name: Mai Nishimura
     affiliation: [1]
+    mark: '*'
     position: Senior Researcher
     url: https://denkiwakame.github.io
-  - name: Tadashi Kozuno
+  - name: Nodoka Shibasaki
+    affiliation: [1]
+    position: intern
+    url: https://nodokas.com/
+  - name: Jeremy Siburian
+    affiliation: [1]
+    position: intern
+    url: https://jsiburian.github.io/
+  - name: Cristian C. Beltran-Hernandez
     affiliation: [1]
     position: Senior Researcher
+    url: https://cristianbehe.me/
+  - name: Masashi Hamaya
+    affiliation: [1]
+    position: Principal Investigator
     url: https://sites.google.com/view/masashihamaya/home
-    #  - name: Mai Nishimura
-    #    affiliation: [1]
-    #    url: https://denkiwakame.github.io
-    #  - name: Asako Kanezaki
-    #    affiliation: [2]
-    #    url: https://kanezaki.github.io/
-contact_ids: ['github', 'omron', 2] #=> github issues, contact@sinicx.com, 2nd author
+contact_ids: ['omron', 6] #=> contact@sinicx.com, 6th author (Masashi Hamaya)
 affiliations:
   - OMRON SINIC X Corporation
-  - Technical University of Munich
 meta:
-  - '* work done as an intern at OMRON SINIC X.'
+  - '* Equal contributions.'
 bibtex: >
-  # arXiv version
-
-  @article{barekatain2019multipolar,
-    title={MULTIPOLAR: Multi-Source Policy Aggregation for Transfer Reinforcement Learning between Diverse Environmental Dynamics},
-    author={Barekatain, Mohammadamin and Yonetani, Ryo and Hamaya, Masashi},
-    journal={arXiv preprint arXiv:1909.13111},
-    year={2019}
-  }
-
-  # IJCAI version
-
-  @inproceedings{barekatain2020multipolar,
-    title={MULTIPOLAR: Multi-Source Policy Aggregation for Transfer Reinforcement Learning between Diverse Environmental Dynamics},
-    author={Barekatain, Mohammadamin and Yonetani, Ryo and Hamaya, Masashi},
-    booktitle={International Joint Conference on Artificial Intelligence (IJCAI)},
-    year={2020}
+  @article{kamijo2026tactile,
+    title={Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist},
+    author={Kamijo, Tatsuya and Nishimura, Mai and Shibasaki, Nodoka and Siburian, Jeremy and Beltran-Hernandez, Cristian C and Hamaya, Masashi},
+    journal={IEEE Robotics and Automation Letters},
+    year={2026},
+    publisher={IEEE}
   }
 header:
   bg_curve:
@@ -65,200 +62,107 @@ header:
 
 teaser: teaser.png
 overview: |
-  This is a versatile template designed to satisfy your research project page needs, all while harnessing the power of **UIKit** and **React**. Built on the foundations of simplicity and flexibility, this template allows you to focus on expressing your ideas without the hassle of directly handling CSS—thanks to customizable SASS variables.
-  With markdown as your canvas and $\KaTeX$ for precise equations, crafting clear and engaging project page becomes effortless. Whether you're unraveling complex theories or presenting your findings, this template aims to support your scholarly endeavors with grace and ease.
-  *Need to edit HTML directly?* Fear not! In addition to markdown, you can also directly write HTML with ease. Feel empowered to craft your content exactly as you envision it, whether through markdown's simplicity or the precision of HTML.
+  Tactile memory, the ability to store and retrieve touch-based experience, is critical for contact-rich tasks such as key insertion under uncertainty.
+  To replicate this capability, we introduce **Tactile Memory with Soft Robot (TaMeSo-bot)**, a system that integrates a soft wrist with tactile retrieval-based control to enable safe and robust manipulation.
+  The soft wrist allows safe contact exploration during data collection, while tactile memory reuses past demonstrations via retrieval for flexible adaptation to unseen scenarios.
+  The core of this system is the **Masked Tactile Trajectory Transformer (MAT<sup>3</sup>)**, which jointly models spatiotemporal interactions between robot actions, distributed tactile feedback, force-torque measurements, and proprioceptive signals.
+  Through masked-token prediction, MAT<sup>3</sup> learns rich spatiotemporal representations by inferring missing sensory information from context, autonomously extracting task-relevant features without explicit subtask segmentation.
+  We validate our approach on peg-in-hole tasks with diverse pegs and conditions in real-robot experiments.
+  Our extensive evaluation demonstrates that MAT<sup>3</sup> achieves higher success rates than the baselines over all conditions and shows remarkable capability to adapt to unseen pegs and conditions.
 
 body:
-  - title: Media examples
+  - title: Method
     text: |
-      You can access media files in `public` directly like: `<img src="method.png" />` 
+      <img src="method.png" class="uk-align-center uk-responsive-width" alt="" />
+      <span class="uk-text-meta">Figure 1: Masked Tactile Trajectory Transformer (MAT<sup>3</sup>) for distributed taxels. During training, the encoder learns to reconstruct the states and actions within a time window <i>H</i>, while randomly masking input tokens. After training, the tactile trajectory datasets are encoded into a single representative embedding <b>z</b> that captures the spatio-temporal dynamics of the tactile-action sequences.</span>
 
-      <img src="method.png" alt="" />
-      <span class="uk-text-meta">Example figcaption text</span>
+      **Softness for safe data collection.** TaMeSo-bot pairs a rigid arm with a highly deformable soft wrist and a two-finger gripper carrying a 3 x 3 array of taxels, each measuring a 3D force. The compliance pays off twice: it absorbs contact forces so teleoperated demonstrations can be collected without triggering protective stops, and it keeps the same contact-rich behavior safe at execution time. Those offline demonstrations become the **tactile memory**, a database the robot queries instead of rolling out a learned policy.
 
-      See also [UIKit Video Components Documentation](https://getuikit.com/docs/video) and [Grid system](https://getuikit.com/docs/grid)
-      <div uk-slider>
-        <div class="uk-slider-items uk-child-width-1-1 uk-child-width-1-2@m" uk-grid>
-          <div>
-            <video
-              src="demo.mp4"
-              loop
-              muted
-              uk-video="autoplay:inview"
-              />
-          </div>
-          <div>
-            <video
-              src="demo.mp4"
-              loop
-              muted
-              uk-video="autoplay:inview"
-              />
-          </div>
-          <div>
-            <video
-              src="demo.mp4"
-              loop
-              muted
-              uk-video="autoplay:inview"
-              />
-          </div>
-        </div>
-        <div class="uk-flex uk-flex-center uk-margin-small">
-          <a class="uk-icon-button" href uk-slidenav-previous uk-slider-item="previous"></a>
-          <a class="uk-icon-button uk-margin-small-left" href uk-slidenav-next uk-slider-item="next"></a>
-        </div>
-      </div>
-  - title: Markdown examples
+      **MAT<sup>3</sup> encodes what the fingers felt.** The keys of that database come from a bidirectional Transformer over sub-trajectories of taxel readings and actions. Taxels and the action are the base tokens, while force-torque, arm pose, and gripper pose are fused in as auxiliary global context; sinusoidal encodings place each taxel on the sensor grid and the action token at its centre. Training is masked-token reconstruction: a random fraction of the input is hidden and the encoder infers it from the surrounding spatial and temporal context, so task-relevant structure emerges without any subtask labels.
+
+      **Retrieval is the policy.** At execution time the current action token is masked, the encoder and average pooling produce a query embedding, and the $k$ nearest stored embeddings are found by L2 distance over an HNSW index, fast enough for real-time control. One neighbour is sampled and its action is executed, so the database itself acts as a non-parametric policy whose behavior stays bounded by the demonstration data.
+  - title: Results
     text: |
-      Here's our demo text showcasing the power of markdown and KaTeX integration!
-      Markdown allows you to easily format text using simple syntax.
-      - **bold**
-      - *italic*
-      - `inline code`.
+      Demonstrations were collected on two peg shapes only, and the policy is then asked to insert five shapes it has never touched. MAT<sup>3</sup> matches the masking-free variant on the seen pegs and pulls clearly ahead on the unseen ones: **85% versus 71%** over 200 trials, while the tactile Transformer baseline stays below 20%.
 
-      You can also create headings of various levels:
-      # Heading Level 1
-      ## Heading Level 2
-      ### Heading Level 3
-      #### Heading Level 4
-      Markdown allows you to create tables like the following:
-      #### Motion Planning (MP) Dataset
-      markdown version
-      |Method|Opt|Exp|Hmean|
-      |--|--|--|--|
-      |BF| 65.8 (63.8, 68.0)| 44.1 (42.8, 45.5) | 44.8 (43.4, 46.3)|
-      |WA*| 68.4 (66.5, 70.4)| 35.8 (34.5, 37.1) | 40.4 (39.0, 41.8)|
-      |**Neural A*** | **87.7 (86.6, 88.9)**| 40.1 (38.9, 41.3) | 52.0 (50.7, 53.3)|
-
-      Of course, you can also directly write tables in HTML if needed. For more details, refer to the [UIKit Table documentation](https://getuikit.com/docs/table).
-      <h4>Motion Planning (MP) Dataset</h4>
-      <p>HTML version</p>
+      #### Real-robot evaluation on seen and unseen pegs
+      <img src="method2.png" class="uk-align-center uk-responsive-width" style="width:80%" alt="" />
+      <span class="uk-text-meta">Figure 2: Seen and unseen pegs, with dimensions in mm.</span>
+      <p class="uk-text-meta">Peg-in-hole task success rate (%) under four different starting positions.</p>
       <div class="uk-overflow-auto">
         <table class="uk-table uk-table-small uk-text-small uk-table-divider">
           <thead>
             <tr>
-              <th>Method</th>
-              <th>Opt</th>
-              <th>Exp</th>
-              <th>Hmean</th>
+              <th></th>
+              <th colspan="2" class="uk-text-center"><b>Seen</b></th>
+              <th colspan="5" class="uk-text-center"><b>Unseen</b></th>
+              <th colspan="2" class="uk-text-center"><b>Total</b></th>
+            </tr>
+            <tr>
+              <th><b>Method</b></th>
+              <th>Square</th><th>Cyl. (&#8960;40)</th>
+              <th>Cyl. (&#8960;30)</th><th>Rectangle</th><th>Oval</th><th>Hexagon</th><th>Pentagon</th>
+              <th>Seen</th><th>Unseen</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>
-                BF
-                <br />
-                WA*
-              </td>
-              <td>
-                65.8 (63.8, 68.0)
-                <br />
-                68.4 (66.5, 70.4)
-              </td>
-              <td>
-                44.1 (42.8, 45.5)
-                <br />
-                35.8 (34.5, 37.1)
-              </td>
-              <td>
-                44.8 (43.4, 46.3)
-                <br />
-                40.4 (39.0, 41.8)
-              </td>
+              <td>Tactile Transformer</td>
+              <td>8/40</td><td>10/40</td>
+              <td>12/40</td><td>6/40</td><td>7/40</td><td>5/40</td><td>5/40</td>
+              <td>18/80 (22.5%)</td><td>35/200 (17.5%)</td>
             </tr>
             <tr>
-              <td>
-                SAIL
-                <br />
-                SAIL-SL
-                <br />
-                BB-A*
-              </td>
-              <td>
-                5.7 (4.6, 6.8)
-                <br />
-                3.1 (2.3, 3.8)
-                <br />
-                31.2 (28.8, 33.5)
-              </td>
-              <td>
-                58.0 (56.1, 60.0)
-                <br />
-                57.6 (55.7, 59.6)
-                <br />
-                52.0 (50.2, 53.9)
-              </td>
-              <td>
-                7.7 (6.4, 9.0)
-                <br />
-                4.4 (3.5, 5.3)
-                <br />
-                31.1 (29.2, 33.0)
-              </td>
+              <td>MAT<sup>3</sup> w/o Mask</td>
+              <td><b>36/40</b></td><td><b>36/40</b></td>
+              <td>33/40</td><td>26/40</td><td>28/40</td><td>30/40</td><td>25/40</td>
+              <td><b>72/80 (90%)</b></td><td>142/200 (71%)</td>
             </tr>
             <tr class="uk-active">
-              <td>
-                Neural BF
-                <br />
-                <b>Neural A*</b>
-              </td>
-              <td>
-                75.5 (73.8, 77.1)
-                <br />
-                <b>87.7 (86.6, 88.9)</b>
-              </td>
-              <td>
-                45.9 (44.6, 47.2)
-                <br />
-                40.1 (38.9, 41.3)
-              </td>
-              <td>
-                52.0 (50.7, 53.4)
-                <br />
-                52.0 (50.7, 53.3)
-              </td>
+              <td><b>MAT<sup>3</sup> (Ours)</b></td>
+              <td>35/40</td><td><b>36/40</b></td>
+              <td><b>35/40</b></td><td><b>32/40</b></td><td><b>34/40</b></td><td><b>36/40</b></td><td><b>33/40</b></td>
+              <td>71/80 (88.8%)</td><td><b>170/200 (85%)</b></td>
             </tr>
           </tbody>
         </table>
       </div>
-      <h3>Selected Path Planning Results</h3>
-      <img
-        src="assets/result1.png"
-        class="uk-align-center uk-responsive-width"
-        alt=""
-      />
-      <h3>Path Planning Results on SSD Dataset</h3>
-      <img
-        src="assets/result2.png"
-        class="uk-align-center uk-responsive-width"
-        alt=""
-      />
-  - title: KaTeX examples
-    text: >
-      $\KaTeX$ enables you to write mathematical expressions beautifully within your text (e.g. $\alpha$, $\beta$, $\gamma$ ).
-      $$ax^2 + bx + c = 0$$
-      $$ \int \oint \sum \prod $$
-      $$ \begin{CD} A @>a>> B \\ @VbVV @AAcA \\ C @= D \end{CD} $$
-      [KaTeX supports a wide range of mathematical symbols and equations](https://katex.org/docs/support_table.html), ensuring your technical content is both clear and visually appealing.
-      With markdown for text formatting and KaTeX for mathematical expressions, our template empowers you to communicate complex ideas effectively. Whether you're writing a scientific paper or a technical blog post, harnessing these tools will elevate your content and engage your readers.
+
+      The gap widens once the setup itself changes. Under starting positions outside the demonstration range, added friction between peg and fixture, and a tilted grasp, MAT<sup>3</sup> succeeds on **57.5%** of trials against 29.2% for the unmasked variant, evidence that masked training buys robustness rather than just accuracy.
+
+      #### Real-robot evaluation under unseen conditions
+      <p class="uk-text-meta">Different starting positions, increased friction between the peg and the fixture surface, and a tilted grasping pose.</p>
+      <div class="uk-overflow-auto">
+        <table class="uk-table uk-table-small uk-text-small uk-table-divider">
+          <thead>
+            <tr>
+              <th><b>Method</b></th>
+              <th>Unseen Starting Positions</th>
+              <th>Increased Friction</th>
+              <th>5&deg; Tilted Grasp</th>
+              <th><b>Total</b></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Tactile Transformer</td><td>2/40</td><td>2/40</td><td>5/40</td><td>9/120 (7.5%)</td></tr>
+            <tr><td>MAT<sup>3</sup> w/o Mask</td><td>9/40</td><td>7/40</td><td>19/40</td><td>35/120 (29.2%)</td></tr>
+            <tr class="uk-active">
+              <td><b>MAT<sup>3</sup> (Ours)</b></td>
+              <td><b>20/40</b></td><td><b>20/40</b></td><td><b>29/40</b></td><td><b>69/120 (57.5%)</b></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 projects:
-  - title: 'maru: a miniature-sized wheeled robot for swarm robotics research'
-    journal: "CHI'24"
-    img: https://getuikit.com/docs/images/light.jpg
+  - title: 'PHASE: Compliance-Enabled Tactile Phase Retrieval for Few-Shot Insertion Learning'
+    journal: "IROS'26"
+    img: https://omron-sinicx.github.io/phase/teaser.png
     description: |
-      "maru" (= miniature assemblage adaptive robot unit) is a custom-made, miniature-sized, two-wheeled robot designed specifically for tabletop swarm robotics research.
-    url: https://github.com/omron-sinicx/swarm-body
-  - title: 'Language-Guided Pattern Formation for Swarm Robotics with Multi-Agent Reinforcement Learning'
+      A compliant wrist reveals insertion phases from touch, so phase-consistent retrieval lifts few-shot peg-in-hole success by 13 points.
+    url: https://omron-sinicx.github.io/phase/
+  - title: 'Multi-Agent Behavior Retrieval: Retrieval-Augmented Policy Training for Cooperative Manipulation by Mobile Robots'
     journal: "IROS'24"
-    img: https://omron-sinicx.github.io/language-guided-pattern-formation/assets/teaser.png
+    img: https://omron-sinicx.github.io/mabr/assets/teaser.png
     description: |
-      "maru" (= miniature assemblage adaptive robot unit) is a custom-made, miniature-sized, two-wheeled robot designed specifically for tabletop swarm robotics research.
-    url: https://github.com/omron-sinicx/swarm-body
-  - title: 'Language-Guided Pattern Formation for Swarm Robotics with Multi-Agent Reinforcement Learning'
-    journal: "IROS'24"
-    img: method.png
-    description: |
-      "maru" (= miniature assemblage adaptive robot unit) is a custom-made, miniature-sized, two-wheeled robot designed specifically for tabletop swarm robotics research.
-    url: https://github.com/omron-sinicx/swarm-body
+      A multi-agent coordination skill database lets multiple mobile robots reuse past memories to adapt to new cooperative manipulation tasks.
+    url: https://omron-sinicx.github.io/mabr/
