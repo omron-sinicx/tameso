@@ -12,8 +12,8 @@ resources:
   demo:
   huggingface:
 description: A soft wrist collects safe tactile demos, and masked trajectory encoding retrieves them to insert unseen pegs at 85% success.
-image: https://omron-sinicx.github.io/${your-repository-name}/teaser.png
-url: https://omron-sinicx.github.io/${your-repository-name}
+image: https://omron-sinicx.github.io/tameso/teaser.png
+url: https://omron-sinicx.github.io/tameso
 speakerdeck: # set a speakerdeck data id to show the Slides section
 authors:
   - name: Tatsuya Kamijo
