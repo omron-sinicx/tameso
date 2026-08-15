@@ -17,8 +17,8 @@ url: https://omron-sinicx.github.io/tameso
 speakerdeck: # set a speakerdeck data id to show the Slides section
 authors:
   - name: Tatsuya Kamijo
-    affiliation: [1]
-    mark: '*'
+    affiliation: [1, 2]
+    mark: ['*', '†']
     position: intern
     url: https://tatsukamijo.github.io
   - name: Mai Nishimura
@@ -27,11 +27,13 @@ authors:
     position: Senior Researcher
     url: https://denkiwakame.github.io
   - name: Nodoka Shibasaki
-    affiliation: [1]
+    affiliation: [1, 3]
+    mark: '†'
     position: intern
     url: https://nodokas.com/
   - name: Jeremy Siburian
-    affiliation: [1]
+    affiliation: [1, 2]
+    mark: '†'
     position: intern
     url: https://jsiburian.github.io/
   - name: Cristian C. Beltran-Hernandez
@@ -45,8 +47,11 @@ authors:
 contact_ids: ['omron', 6] #=> contact@sinicx.com, 6th author (Masashi Hamaya)
 affiliations:
   - OMRON SINIC X Corporation
+  - The University of Tokyo
+  - Northeastern University
 meta:
-  - '* Equal contributions.'
+  - '* Equal contribution.'
+  - '† Work done during internships at OMRON SINIC X.'
 bibtex: >
   @article{kamijo2026tactile,
     title={Tactile Memory with Soft Robot: Robust Object Insertion via Masked Encoding and Soft Wrist},
