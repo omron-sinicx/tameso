@@ -67,7 +67,7 @@ header:
 
 teaser: teaser.png
 overview: |
-  Tactile memory, the ability to store and retrieve touch-based experience, is critical for contact-rich tasks such as key insertion under uncertainty.
+  Tactile memory, the ability to store and retrieve touch-based experience, is critical for contact-rich tasks such as peg-in-hole insertion under uncertainty.
   To replicate this capability, we introduce **Tactile Memory with Soft Robot (TaMeSo-bot)**, a system that integrates a soft wrist with tactile retrieval-based control to enable safe and robust manipulation.
   The soft wrist allows safe contact exploration during data collection, while tactile memory reuses past demonstrations via retrieval for flexible adaptation to unseen scenarios.
   The core of this system is the **Masked Tactile Trajectory Transformer (MAT<sup>3</sup>)**, which jointly models spatiotemporal interactions between robot actions, distributed tactile feedback, force-torque measurements, and proprioceptive signals.
@@ -76,6 +76,16 @@ overview: |
   Our extensive evaluation demonstrates that MAT<sup>3</sup> achieves higher success rates than the baselines over all conditions and shows remarkable capability to adapt to unseen pegs and conditions.
 
 body:
+  - title: Tactile Memory
+    text: |
+      <img src="tactile_memory.png" class="uk-align-center uk-responsive-width" alt="Tactile memory in contact-rich tasks: encoding through exploratory touch, storage as a neural representation, and retrieval to guide insertion." />
+      <span class="uk-text-meta">Humans encode contact experience through exploratory touch, store it, and recall it to guide insertion. TaMeSo-bot builds a robotic counterpart to each stage. The illustration is conceptual and does not depict a neural or algorithmic implementation.</span>
+
+      You drop a peg into a hole you cannot see, guided only by what the fingers feel. Small exploratory motions tell you where the rim catches, and you recall how a peg of this shape slid, jammed, and finally seated the last time. Cognitive science calls this **tactile memory**: the encoding, storage, and retrieval of touch-based experience. It keeps the temporal structure of contact rather than isolated events, and it works together with proprioception rather than in isolation.
+
+      **TaMeSo-bot mirrors the three stages.** A soft wrist lets the robot press into contact without triggering a protective stop, so teleoperated demonstrations capture rich signals from the distributed taxels (*encoding*). MAT<sup>3</sup> compresses each sub-trajectory of tactile, force-torque, pose, and action signals into one vector, and each vector goes into a database with the action that accompanied it (*storage*). During execution the robot encodes its current contact history as a query and replays the action attached to the nearest stored experience (*retrieval*).
+
+      **Why this framing matters.** Prior insertion systems name their contact phases in advance and hand the robot a state machine to follow. Tactile memory needs no such labels. Similarity in the learned representation decides which past experience applies right now, so *fit*, *align*, and *insert* emerge from the data instead of being written down. The soft wrist absorbs whatever mismatch retrieval leaves behind, which is what lets a memory built from two peg shapes carry over to five it has never touched.
   - title: Method
     text: |
       <img src="method.png" class="uk-align-center uk-responsive-width" alt="" />
@@ -88,72 +98,142 @@ body:
       **Retrieval is the policy.** At execution time the current action token is masked, the encoder and average pooling produce a query embedding, and the $k$ nearest stored embeddings are found by L2 distance over an HNSW index, fast enough for real-time control. One neighbour is sampled and its action is executed, so the database itself acts as a non-parametric policy whose behavior stays bounded by the demonstration data.
   - title: Results
     text: |
-      Demonstrations were collected on two peg shapes only, and the policy is then asked to insert five shapes it has never touched. MAT<sup>3</sup> matches the masking-free variant on the seen pegs and pulls clearly ahead on the unseen ones: **85% versus 71%** over 200 trials, while the tactile Transformer baseline stays below 20%.
+      Demonstrations were collected on two peg shapes only, and the policy is then asked to insert five shapes it has never touched. MAT<sup>3</sup> matches the masking-free variant on the seen pegs and pulls clearly ahead on the unseen ones: **85% versus 71%** over 200 trials. We also compare against Action Chunking Transformer (ACT), a parametric policy trained on the same 64 demonstrations with tactile-proprioceptive inputs: it reaches 63.8% on seen pegs but falls to 53% on unseen shapes, its dominant failure being downward force applied before the peg is aligned, which triggers a protective stop. The tactile Transformer baseline stays below 20% throughout.
 
       #### Real-robot evaluation on seen and unseen pegs
       <img src="method2.png" class="uk-align-center uk-responsive-width" style="width:80%" alt="" />
       <span class="uk-text-meta">Figure 2: Seen and unseen pegs, with dimensions in mm.</span>
-      <p class="uk-text-meta">Peg-in-hole task success rate (%) under four different starting positions.</p>
+      <p class="uk-text-meta">Peg-in-hole task success rate under four different starting positions: 40 trials per peg shape, 10 from each starting position. Best result per row in bold.</p>
       <div class="uk-overflow-auto">
-        <table class="uk-table uk-table-small uk-text-small uk-table-divider">
+        <table class="uk-table uk-table-small uk-text-small uk-table-divider" style="max-width:640px;margin-left:auto;margin-right:auto">
           <thead>
             <tr>
-              <th></th>
-              <th colspan="2" class="uk-text-center"><b>Seen</b></th>
-              <th colspan="5" class="uk-text-center"><b>Unseen</b></th>
-              <th colspan="2" class="uk-text-center"><b>Total</b></th>
-            </tr>
-            <tr>
-              <th><b>Method</b></th>
-              <th>Square</th><th>Cyl. (&#8960;40)</th>
-              <th>Cyl. (&#8960;30)</th><th>Rectangle</th><th>Oval</th><th>Hexagon</th><th>Pentagon</th>
-              <th>Seen</th><th>Unseen</th>
+              <th>Shape</th>
+              <th class="uk-text-right">Tactile Transformer</th>
+              <th class="uk-text-right">MAT<sup>3</sup> w/o Mask</th>
+              <th class="uk-text-right" style="color:#e55927"><b>MAT<sup>3</sup> (Ours)</b></th>
+              <th class="uk-text-right" style="border-left:1px solid #d0d0d0;">ACT</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>Tactile Transformer</td>
-              <td>8/40</td><td>10/40</td>
-              <td>12/40</td><td>6/40</td><td>7/40</td><td>5/40</td><td>5/40</td>
-              <td>18/80 (22.5%)</td><td>35/200 (17.5%)</td>
+              <td colspan="5" class="uk-text-meta"><b>Seen</b></td>
             </tr>
             <tr>
-              <td>MAT<sup>3</sup> w/o Mask</td>
-              <td><b>36/40</b></td><td><b>36/40</b></td>
-              <td>33/40</td><td>26/40</td><td>28/40</td><td>30/40</td><td>25/40</td>
-              <td><b>72/80 (90%)</b></td><td>142/200 (71%)</td>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><rect x="3" y="3" width="14" height="14" /></svg>Square</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.07)">20%<br /><span style="font-size:0.8em;color:#767676">8/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.24)"><b>90%</b><br /><span style="font-size:0.8em;color:#767676">36/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.23)">87.5%<br /><span style="font-size:0.8em;color:#767676">35/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.10)">32.5%<br /><span style="font-size:0.8em;color:#767676">13/40</span></td>
             </tr>
-            <tr class="uk-active">
-              <td><b>MAT<sup>3</sup> (Ours)</b></td>
-              <td>35/40</td><td><b>36/40</b></td>
-              <td><b>35/40</b></td><td><b>32/40</b></td><td><b>34/40</b></td><td><b>36/40</b></td><td><b>33/40</b></td>
-              <td>71/80 (88.8%)</td><td><b>170/200 (85%)</b></td>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><circle cx="10" cy="10" r="7.5" /></svg>Cyl. (&#8960;40)</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.08)">25%<br /><span style="font-size:0.8em;color:#767676">10/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.24)">90%<br /><span style="font-size:0.8em;color:#767676">36/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.24)">90%<br /><span style="font-size:0.8em;color:#767676">36/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.25)"><b>95%</b><br /><span style="font-size:0.8em;color:#767676">38/40</span></td>
+            </tr>
+            <tr>
+              <td><b>Total (Seen)</b></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.07)">22.5%<br /><span style="font-size:0.8em;color:#767676">18/80</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.24)"><b>90%</b><br /><span style="font-size:0.8em;color:#767676">72/80</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.23)">88.8%<br /><span style="font-size:0.8em;color:#767676">71/80</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.17)">63.8%<br /><span style="font-size:0.8em;color:#767676">51/80</span></td>
+            </tr>
+            <tr>
+              <td colspan="5" class="uk-text-meta"><b>Unseen</b></td>
+            </tr>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><circle cx="10" cy="10" r="5.5" /></svg>Cyl. (&#8960;30)</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.09)">30%<br /><span style="font-size:0.8em;color:#767676">12/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.22)">82.5%<br /><span style="font-size:0.8em;color:#767676">33/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.23)">87.5%<br /><span style="font-size:0.8em;color:#767676">35/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.24)"><b>92.5%</b><br /><span style="font-size:0.8em;color:#767676">37/40</span></td>
+            </tr>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><rect x="2" y="6" width="16" height="8" /></svg>Rectangle</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.06)">15%<br /><span style="font-size:0.8em;color:#767676">6/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.18)">65%<br /><span style="font-size:0.8em;color:#767676">26/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.21)"><b>80%</b><br /><span style="font-size:0.8em;color:#767676">32/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.08)">25%<br /><span style="font-size:0.8em;color:#767676">10/40</span></td>
+            </tr>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><ellipse cx="10" cy="10" rx="8.5" ry="5" /></svg>Oval</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.06)">17.5%<br /><span style="font-size:0.8em;color:#767676">7/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.19)">70%<br /><span style="font-size:0.8em;color:#767676">28/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.22)"><b>85%</b><br /><span style="font-size:0.8em;color:#767676">34/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.18)">65%<br /><span style="font-size:0.8em;color:#767676">26/40</span></td>
+            </tr>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><polygon points="10,2 3.1,6 3.1,14 10,18 16.9,14 16.9,6" /></svg>Hexagon</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.05)">12.5%<br /><span style="font-size:0.8em;color:#767676">5/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.20)">75%<br /><span style="font-size:0.8em;color:#767676">30/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.24)"><b>90%</b><br /><span style="font-size:0.8em;color:#767676">36/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.14)">50%<br /><span style="font-size:0.8em;color:#767676">20/40</span></td>
+            </tr>
+            <tr>
+              <td><svg width="16" height="16" viewBox="0 0 20 20" fill="#8a8a8a" style="vertical-align:-3px;margin-right:7px" aria-hidden="true"><polygon points="10,2 2.4,7.5 5.3,16.5 14.7,16.5 17.6,7.5" /></svg>Pentagon</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.05)">12.5%<br /><span style="font-size:0.8em;color:#767676">5/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.17)">62.5%<br /><span style="font-size:0.8em;color:#767676">25/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.22)"><b>82.5%</b><br /><span style="font-size:0.8em;color:#767676">33/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.10)">32.5%<br /><span style="font-size:0.8em;color:#767676">13/40</span></td>
+            </tr>
+            <tr>
+              <td><b>Total (Unseen)</b></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.06)">17.5%<br /><span style="font-size:0.8em;color:#767676">35/200</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.19)">71%<br /><span style="font-size:0.8em;color:#767676">142/200</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.22)"><b>85%</b><br /><span style="font-size:0.8em;color:#767676">170/200</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.15)">53%<br /><span style="font-size:0.8em;color:#767676">106/200</span></td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      The gap widens once the setup itself changes. Under starting positions outside the demonstration range, added friction between peg and fixture, and a tilted grasp, MAT<sup>3</sup> succeeds on **57.5%** of trials against 29.2% for the unmasked variant, evidence that masked training buys robustness rather than just accuracy.
+      Retrieval is what keeps the policy inside the demonstration distribution. A parametric policy has no such guarantee, and ACT extrapolates beyond it, executing insertion-phase behavior before the alignment is done.
+
+      The gap widens once the setup itself changes. Under starting positions outside the demonstration range, added friction between peg and fixture, and a tilted grasp, MAT<sup>3</sup> succeeds on **57.5%** of trials, while MAT<sup>3</sup> w/o Mask drops to 29.2%, ACT to 14.2%, and the tactile Transformer to 7.5%, evidence that masked training buys robustness rather than just accuracy.
 
       #### Real-robot evaluation under unseen conditions
       <p class="uk-text-meta">Different starting positions, increased friction between the peg and the fixture surface, and a tilted grasping pose.</p>
       <div class="uk-overflow-auto">
-        <table class="uk-table uk-table-small uk-text-small uk-table-divider">
+        <table class="uk-table uk-table-small uk-text-small uk-table-divider" style="max-width:700px;margin-left:auto;margin-right:auto">
           <thead>
             <tr>
-              <th><b>Method</b></th>
-              <th>Unseen Starting Positions</th>
-              <th>Increased Friction</th>
-              <th>5&deg; Tilted Grasp</th>
-              <th><b>Total</b></th>
+              <th>Condition</th>
+              <th class="uk-text-right">Tactile Transformer</th>
+              <th class="uk-text-right">MAT<sup>3</sup> w/o Mask</th>
+              <th class="uk-text-right" style="color:#e55927"><b>MAT<sup>3</sup> (Ours)</b></th>
+              <th class="uk-text-right" style="border-left:1px solid #d0d0d0;">ACT</th>
             </tr>
           </thead>
           <tbody>
-            <tr><td>Tactile Transformer</td><td>2/40</td><td>2/40</td><td>5/40</td><td>9/120 (7.5%)</td></tr>
-            <tr><td>MAT<sup>3</sup> w/o Mask</td><td>9/40</td><td>7/40</td><td>19/40</td><td>35/120 (29.2%)</td></tr>
-            <tr class="uk-active">
-              <td><b>MAT<sup>3</sup> (Ours)</b></td>
-              <td><b>20/40</b></td><td><b>20/40</b></td><td><b>29/40</b></td><td><b>69/120 (57.5%)</b></td>
+            <tr>
+              <td>Unseen Starting Positions</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.03)">5%<br /><span style="font-size:0.8em;color:#767676">2/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.07)">22.5%<br /><span style="font-size:0.8em;color:#767676">9/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.14)"><b>50%</b><br /><span style="font-size:0.8em;color:#767676">20/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.04)">10%<br /><span style="font-size:0.8em;color:#767676">4/40</span></td>
+            </tr>
+            <tr>
+              <td>Increased Friction</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.03)">5%<br /><span style="font-size:0.8em;color:#767676">2/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.06)">17.5%<br /><span style="font-size:0.8em;color:#767676">7/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.14)"><b>50%</b><br /><span style="font-size:0.8em;color:#767676">20/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.04)">7.5%<br /><span style="font-size:0.8em;color:#767676">3/40</span></td>
+            </tr>
+            <tr>
+              <td>5&deg; Tilted Grasp</td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.05)">12.5%<br /><span style="font-size:0.8em;color:#767676">5/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.13)">47.5%<br /><span style="font-size:0.8em;color:#767676">19/40</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.19)"><b>72.5%</b><br /><span style="font-size:0.8em;color:#767676">29/40</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.08)">25%<br /><span style="font-size:0.8em;color:#767676">10/40</span></td>
+            </tr>
+            <tr>
+              <td><b>Total</b></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.04)">7.5%<br /><span style="font-size:0.8em;color:#767676">9/120</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.09)">29.2%<br /><span style="font-size:0.8em;color:#767676">35/120</span></td>
+              <td class="uk-text-right" style="background:rgba(229,89,39,0.16)"><b>57.5%</b><br /><span style="font-size:0.8em;color:#767676">69/120</span></td>
+              <td class="uk-text-right" style="border-left:1px solid #d0d0d0;background:rgba(229,89,39,0.05)">14.2%<br /><span style="font-size:0.8em;color:#767676">17/120</span></td>
             </tr>
           </tbody>
         </table>
