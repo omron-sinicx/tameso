@@ -78,7 +78,7 @@ overview: |
 body:
   - title: Tactile Memory
     text: |
-      <img src="tactile_memory.png" class="uk-align-center uk-responsive-width" alt="Tactile memory in contact-rich tasks: encoding through exploratory touch, storage as a neural representation, and retrieval to guide insertion." />
+      <img src="tactile_memory.png" class="uk-align-center uk-responsive-width" alt="Tactile memory in contact-rich tasks: encoding through exploratory touch on a familiar peg, storage as a neural representation, and retrieval that guides insertion of an unseen peg shape." />
       <span class="uk-text-meta">Humans encode contact experience through exploratory touch, store it, and recall it to guide insertion. TaMeSo-bot builds a robotic counterpart to each stage. The illustration is conceptual and does not depict a neural or algorithmic implementation.</span>
 
       You drop a peg into a hole you cannot see, guided only by what the fingers feel. Small exploratory motions tell you where the rim catches, and you recall how a peg of this shape slid, jammed, and finally seated the last time. Cognitive science calls this **tactile memory**: the encoding, storage, and retrieval of touch-based experience. It keeps the temporal structure of contact rather than isolated events, and it works together with proprioception rather than in isolation.
