@@ -61,7 +61,9 @@ the encoder that builds the tactile memory, and the retrieval on top of it:
 
 MAT<sup>3</sup> maps a sub-trajectory of the observation history
 
-$$\tau = \left( \lbrace s_{t-H+1}, a_{t-H+1} \rbrace, \dots, \lbrace s_t, a_t \rbrace \right)$$
+```math
+\tau = \left( \lbrace s_{t-H+1}, a_{t-H+1} \rbrace, \dots, \lbrace s_t, a_t \rbrace \right)
+```
 
 to a compact key $z_t$ that is stored in the tactile memory together with the action $a_t$.
 
@@ -74,10 +76,7 @@ to a compact key $z_t$ that is stored in the tactile memory together with the ac
   (4 layers, 8 heads, $d = 248 + 8 = 256$, feed-forward dimension 512).
 * **Masked token prediction.** For every window a masking ratio is drawn from $\mathcal{U}(0, 0.6)$
   and taxel / action tokens are replaced by `[MASK]` with that probability. The model reconstructs
-  the taxel readings and actions:
-
-  $$\mathcal{L} = \mathcal{L}_{\mathrm{tactile}} + \mathcal{L}_{\mathrm{action}} \quad \text{(MSE)}$$
-
+  the taxel readings and actions.
 * **Inference.** The action token of the current step is masked (the current action is unknown at
   execution time) and the output tokens are average-pooled into $z$. At execution time, the $k$ nearest
   keys of $z_q$ under $\lVert z_q - z_i \rVert_2$ are retrieved with an HNSW index and one of them is
