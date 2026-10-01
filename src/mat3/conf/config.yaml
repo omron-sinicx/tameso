@@ -1,0 +1,63 @@
+# MAT^3 training configuration (hydra). Override anything from the command line, e.g.
+#   pixi run train train.epochs=5 model.nlayers=2 logging.run_name=my-run
+defaults:
+  - _self_
+  - optional experiment: null
+
+seed: 42
+
+data:
+  repo_id: omron-sinicx/contactile_200_lota   # Hugging Face Hub id, downloaded on first use
+  revision: null                        # branch / tag / commit of the Hub repository (default: main)
+  root: null                            # local copy (default: $HF_LEROBOT_HOME/<repo_id>)
+  seq_len: 15                           # frames per window (50 Hz -> 0.3 s)
+  train_ratio: 0.8                      # first 80% of the frames for training, the rest for validation
+  batch_size: 128
+  num_workers: 4
+  normalization:                        # actions are NOT normalised (as in the paper models)
+    observation.eef.position: mean_std
+    observation.eef.rotation_ortho6: min_max
+    observation.contactile: mean_std
+    observation.vive_tracker_pose: mean_std
+    observation.ft: mean_std
+
+model:
+  ninp: 256
+  nhead: 8
+  nhid: 512
+  nlayers: 4
+  dropout: 0.1
+  spatial_embed_dim: 8
+  seq_len: ${data.seq_len}
+  causal: false                         # bidirectional encoder (paper); true reproduces the original code
+  modality_weights:
+    content_weight: 0.9
+    position_weight: 0.1
+    base_weight: 0.4
+    context_weight: 0.6
+    ft_weight: 0.2
+    wp_weight: 0.4
+    vp_weight: 0.4
+
+train:
+  epochs: 30
+  lr: 1.0e-4
+  mask_strategy: random_all             # none | last_action | random_action | random_taxel | random_all | causal | causal_last_action
+  max_mask_ratio: 0.6
+  loss_type: reconstruction             # reconstruction | next_prediction
+  amp: true
+  deterministic: false
+  max_steps_per_epoch: null
+  output_dir: ${hydra:runtime.output_dir}/models
+
+logging:
+  trackio: true
+  project: mat3
+  run_name: null
+  space_id: null                        # e.g. "<user>/mat3-dashboard" to sync the dashboard to a HF Space
+
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job:
+    chdir: false

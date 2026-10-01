@@ -1,0 +1,75 @@
+[project]
+name = "mat3"
+version = "0.1.0"
+description = "MAT^3: MAsked Tactile Trajectory Transformer encoder + vicinity retrieval for contact-rich manipulation"
+authors = [{ name = "OMRON SINIC X Corporation" }]
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+requires-python = ">=3.12"
+dependencies = [
+  "torch>=2.7,<2.12",
+  "lerobot[dataset]>=0.6.1,<0.7",
+  "vicinity[voyager,hnsw]>=0.4.4,<0.5",
+  "trackio>=0.30,<1",
+  "hydra-core>=1.3.2,<2",
+  "safetensors>=0.4.3",
+  "scipy>=1.13",
+  "tqdm>=4.66",
+]
+
+[project.scripts]
+mat3-train = "mat3.train:main"
+mat3-build-db = "mat3.scripts.build_db:main"
+mat3-eval-db = "mat3.scripts.evaluate_db:main"
+
+[project.urls]
+Repository = "https://github.com/omron-sinicx/tameso"
+Homepage = "https://omron-sinicx.github.io/tameso/"
+Paper = "https://doi.org/10.1109/LRA.2026.3692097"
+
+[build-system]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mat3"]
+
+# ------------------------------------------------------------------ pixi ---
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.dependencies]
+python = "3.12.*"
+ffmpeg = ">=7,<8"  # torchcodec 0.5 supports FFmpeg 4-7
+
+[tool.pixi.pypi-dependencies]
+mat3 = { path = ".", editable = true }
+# pinned for bit-reproducible training (the package itself accepts torch>=2.7,<2.12)
+torch = "==2.7.1"
+torchcodec = ">=0.5,<0.6"  # torchcodec <-> torch compatibility
+
+[tool.pixi.activation.env]
+PYTHONNOUSERSITE = "1"
+TRACKIO_DIR = "$PIXI_PROJECT_ROOT/trackio"
+
+[tool.pixi.tasks]
+login-hf = { cmd = "hf auth login", description = "Login to Hugging Face" }
+train = { cmd = "python -m mat3.train", description = "Train the MAT^3 encoder (hydra overrides allowed)" }
+debug = { cmd = "python -m mat3.train experiment=debug", description = "Tiny end-to-end run for debugging (2 epochs x 5 steps)" }
+build-db = { cmd = "python -m mat3.scripts.build_db", description = "Encode the training split and build a vicinity DB" }
+eval-db = { cmd = "python -m mat3.scripts.evaluate_db", description = "Offline retrieval evaluation (position / rotation error)" }
+dashboard = { cmd = "trackio show", description = "Open the trackio dashboard" }
+
+[tool.pixi.feature.dev.pypi-dependencies]
+pytest = ">=8"
+ruff = ">=0.9"
+
+[tool.pixi.environments]
+default = { features = ["dev"], solve-group = "default" }
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+

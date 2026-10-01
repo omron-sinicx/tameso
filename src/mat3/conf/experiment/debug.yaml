@@ -1,0 +1,15 @@
+# @package _global_
+# Tiny end-to-end run to debug the pipeline:  pixi run debug
+data:
+  batch_size: 16
+  num_workers: 0
+model:
+  ninp: 64
+  nhid: 128
+  nlayers: 2
+train:
+  epochs: 2
+  max_steps_per_epoch: 5
+logging:
+  project: mat3-debug
+  run_name: debug
