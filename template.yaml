@@ -6,7 +6,7 @@ conference: RA-L 2026
 resources:
   paper: https://arxiv.org/abs/2601.19275
   poster: # TODO(human)
-  code: # TODO(human): code release URL, if any
+  code: https://github.com/omron-sinicx/tameso
   video: # TODO(human): supplementary video URL, if any
   blog:
   demo:
